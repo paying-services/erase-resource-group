@@ -1,0 +1,26 @@
+name: erase resource group
+run-name: erase resource group
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+
+  execute:
+    name: erase rg
+    runs-on: self-hosted #my only local runner
+
+    steps:
+    # Checkout code
+    - uses: actions/checkout@v3    
+    #https://github.com/marketplace/actions/azure-login#login-with-a-service-principal-secret
+    - name: Az CLI login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: erase resource-group
+      run: |
+        az deployment group create --resource-group rg-to-be-deleted --template-file bicep/main.bicep  --mode Complete
